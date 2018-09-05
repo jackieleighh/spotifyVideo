@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('spotifyvideo', ['ionic','spotifyvideo.controllers','ngCordova', 'ngCordovaOauth', 'spotify'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -24,3 +24,28 @@ angular.module('starter', ['ionic'])
     }
   });
 })
+
+.config(function($stateProvider, $urlRouterProvider) {
+  $urlRouterProvider.otherwise('/');
+
+  $stateProvider
+  .state('lists', {
+    url: '/',
+    templateUrl: 'templates/lists.html',
+    controller: 'ListsCtrl'
+  })
+  .state('playlist', {
+    url: '/playlist/:listid/:userid/:listname',
+    templateUrl: 'templates/playlist.html',
+    controller: 'PlaylistCtrl'
+  });
+
+})
+
+.config(function (SpotifyProvider) {
+  SpotifyProvider.setClientId('572e9a9e80ba47b09b7ec8eca1e8a709');
+  SpotifyProvider.setRedirectUri('http://localhost/callback');
+  SpotifyProvider.setScope('user-read-private playlist-read-private');
+  // If you already have an auth token
+  //SpotifyProvider.setAuthToken('<AUTH_TOKEN>');
+});

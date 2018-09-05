@@ -1,0 +1,23 @@
+<ion-view title="SpotifyVideo">
+	<ion-content class="has-header">
+		<ion-list>
+			<ion-item ng-repeat="list in playlists" ui-sref="playlist({listid: list.id, userid: list.owner.id, listname: list.name})">
+				{{list.name}}
+			</ion-item>
+		</ion-list>
+		{{ status }}
+		<button ng-click="spotifyLogin()" ng-if="!loggedIn">log in</button>
+	</ion-content>
+
+	<ion-footer-bar ng-if="isPlaylist" class="bar-subfooter bar-stable">
+        <button ng-click="prev()" class="button button-outline button-balanced pull-left"><i class="ion-skip-backward"> Prev</i></button>
+        <div class="title">{{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }}</div>
+        <button ng-click="next()" class="button button-outline button-balanced pull-right"><i class="ion-skip-forward"> Next</i></button>
+    </ion-footer-bar>
+	<ion-footer-bar align-title="left" class="bar-stable" ng-show="currentTrack">
+        <button ng-click="play()" class="button button-outline button-balanced pull-left"><i class="ion-play"> Play</i></button>
+    	<div class="title" ng-if="!isPlaylist"> {{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }} </div>
+    	<div class="title" ng-if="isPlaylist"> {{ currentPlaylist }} </div>
+        <button ng-click="pause()" class="button button-outline button-balanced pull-right"><i class="ion-pause"> Pause</i></button>
+    </ion-footer-bar> 
+</ion-view>

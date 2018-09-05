@@ -1,0 +1,15 @@
+{
+  "name": "ionic-audio",
+  "homepage": "https://github.com/arielfaur/ionic-audio",
+  "version": "3.0.2",
+  "_release": "3.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v3.0.2",
+    "commit": "3463b10e9afdc930ca5be79e94038e0d88d7ed7c"
+  },
+  "_source": "https://github.com/arielfaur/ionic-audio.git",
+  "_target": "^3.0.2",
+  "_originalSource": "ionic-audio",
+  "_direct": true
+}
