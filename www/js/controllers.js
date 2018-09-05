@@ -5,6 +5,7 @@ angular.module('spotifyvideo.controllers', [])
 	// make sure we're logged in first
 	Spotify.getCurrentUser().then(function(data) {
 	}, function(error) {
+		// redirect to list view for login
 		window.location = '/';
 	}); 
 	
@@ -52,39 +53,12 @@ angular.module('spotifyvideo.controllers', [])
 	 		});
 	 	});
 	}
-
+	// BUTTON TO OPEN SPOTIFY APP
 	$scope.openSpotify = function(link) {
 		window.open(link, '_blank', 'location=yes');
 	}
 
-	$scope.pause = function() {
-		if($scope.currentTrack != null) {
-			$rootScope.player.pause();
-		}
-	}
-
-	$scope.play = function() { 
-		if($scope.currentTrack != null) {
-			$rootScope.player.play();
-		}
-	}
-
-	$scope.prev = function() {
-		if($scope.currentTrack != null && $scope.isPlaylist) {
-			$rootScope.player.skipToPrevious().then(function() {
-
-			}, function(error) {
-				console.log($rootScope.player);
-			});
-		}
-	}
-
-	$scope.next = function() { 
-		if($scope.currentTrack != null && $scope.isPlaylist) {
-			$rootScope.player.skipToNext();
-		}
-	}
-
+	/* VIDEO CAPTURE FUNCTIONS */
 	// capture callback
 	var captureSuccess = function(mediaFiles) {
 	    var i, path, len;
@@ -108,6 +82,31 @@ angular.module('spotifyvideo.controllers', [])
 		// start video capture
 		navigator.device.capture.captureVideo(captureSuccess, captureError, {limit:2});
 	};
+
+	/* PLAYER CONTROLS FOR FOOTER BAR */
+	$scope.pause = function() {
+		if($scope.currentTrack != null) {
+			$rootScope.player.pause();
+		}
+	}
+
+	$scope.play = function() { 
+		if($scope.currentTrack != null) {
+			$rootScope.player.play();
+		}
+	}
+
+	$scope.prev = function() {
+		if($scope.currentTrack != null && $scope.isPlaylist) {
+			$rootScope.player.skipToPrevious();
+		}
+	}
+
+	$scope.next = function() { 
+		if($scope.currentTrack != null && $scope.isPlaylist) {
+			$rootScope.player.skipToNext();
+		}
+	}
 
 })
 
@@ -161,6 +160,7 @@ angular.module('spotifyvideo.controllers', [])
 		});
 	};
 
+	/* PLAYER CONTROLS FOR FOOTER BAR */
 	$scope.pause = function() {
 		if($scope.currentTrack != null) {
 			$rootScope.player.pause();
