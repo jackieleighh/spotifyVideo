@@ -29,8 +29,13 @@ angular.module('spotifyvideo', ['ionic','spotifyvideo.controllers','ngCordova', 
   $urlRouterProvider.otherwise('/');
 
   $stateProvider
-  .state('lists', {
+  .state('login', {
     url: '/',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
+  })
+  .state('lists', {
+    url: '/lists',
     templateUrl: 'templates/lists.html',
     controller: 'ListsCtrl'
   })
@@ -46,6 +51,4 @@ angular.module('spotifyvideo', ['ionic','spotifyvideo.controllers','ngCordova', 
   SpotifyProvider.setClientId('572e9a9e80ba47b09b7ec8eca1e8a709');
   SpotifyProvider.setRedirectUri('http://localhost/callback');
   SpotifyProvider.setScope('user-read-private playlist-read-private');
-  // If you already have an auth token
-  //SpotifyProvider.setAuthToken('<AUTH_TOKEN>');
 });

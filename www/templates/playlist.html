@@ -1,43 +1,31 @@
-<ion-view title="{{listname}}">
+<ion-view title="{{listname}}" class="playlist-view">
 	<ion-nav-buttons side="right">
-	  <button class="button button-light button-outline" ng-click="captureVideo()">
-	    <i class="icon ion-videocam"></i>
+	  <button class="button button-positive no-outline" ng-click="openSpotify(listid)">
+	    <i class="icon ion-share"></i>
 	  </button>
 	</ion-nav-buttons>
 	<ion-content class="has-header">
-		<button class="button button-full button-balanced button-outline" ng-click="playPlaylist()">
+		<button class="button button-full button-positive button-outline" ng-click="playPlaylist()">
 			Shuffle Playlist <i class="ion-shuffle"></i>
 		</button>
 		<ion-list>
 			<ion-item ng-repeat="item in tracks" class="list card">
-				<div class="item item-avatar">
+				<div class="item item-avatar" ng-click="playTrack(item)">
 					<img src="{{item.track.album.images[0].url}}">
 					<h2>{{item.track.name}}</h2>
                     <p>{{item.track.artists[0].name}}</p>
-                </div>
-                <div class="item tabs tabs-secondary tabs-icon-left">
-                    <a class="tab-item" ng-click="playTrack(item)">
-                        <i class="icon ion-music-note"></i> 
-                        Play Track
-                    </a>
-                    <a class="tab-item" ng-click="openSpotify(item.track.external_urls.spotify)">
-                        <i class="icon ion-share"></i>
-                        Open in Spotify
-                    </a>
                 </div>
             </ion-item>
         </ion-list>
 	</ion-content>
 
-	<ion-footer-bar ng-if="isPlaylist" class="bar-subfooter bar-stable">
-        <button ng-click="prev()" class="button button-outline button-balanced pull-left"><i class="ion-skip-backward"> Prev</i></button>
-        <div class="title">{{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }}</div>
-        <button ng-click="next()" class="button button-outline button-balanced pull-right"><i class="ion-skip-forward"> Next</i></button>
+	<ion-footer-bar class="bar-subfooter bar-stable" ng-show="currentTrack">
+        <button ng-click="play()" class="button button-outline button-positive pull-left"><i class="ion-play"> Play</i></button>
+        <div class="title" ng-if="!isPlaylist"> {{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }} </div>
+        <div class="title" ng-if="isPlaylist"> {{ currentPlaylist }} </div>
+        <button ng-click="pause()" class="button button-outline button-positive pull-right"><i class="ion-pause"> Pause</i></button>
     </ion-footer-bar>
-	<ion-footer-bar align-title="left" class="bar-stable" ng-show="currentTrack">
-        <button ng-click="play()" class="button button-outline button-balanced pull-left"><i class="ion-play"> Play</i></button>
-    	<div class="title" ng-if="!isPlaylist"> {{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }} </div>
-    	<div class="title" ng-if="isPlaylist"> {{ currentPlaylist }} </div>
-        <button ng-click="pause()" class="button button-outline button-balanced pull-right"><i class="ion-pause"> Pause</i></button>
+	<ion-footer-bar align-title="left" class="bar-positive">
+        <button ng-click="captureVideo()" class="button button-positive no-outline video-button"><i class="ion-videocamera"> Record Video</i></button>
     </ion-footer-bar>
 </ion-view>

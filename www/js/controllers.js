@@ -1,12 +1,11 @@
 angular.module('spotifyvideo.controllers', [])
 
-.controller('PlaylistCtrl', function($scope, $rootScope, $stateParams, Spotify, AlertController) {
+.controller('PlaylistCtrl', function($scope, $rootScope, $stateParams, $state, Spotify) {
 	
 	// make sure we're logged in first
 	Spotify.getCurrentUser().then(function(data) {
 	}, function(error) {
-		// redirect to list view for login
-		window.location = '/';
+		$state.go('login');
 	}); 
 	
 	var listid = $stateParams.listid;
@@ -24,37 +23,36 @@ angular.module('spotifyvideo.controllers', [])
  		uri_list[i] = "spotify:track:" + $scope.tracks[i].track.id;
  	}
 
+ 	// set repeat on auto
+ 	//$rootScope.player.setRepeat({ state: true });
+
  	// TRY TO USE PLAYLIST LINK INSTEAD OF URI LIST
 	$scope.playPlaylist = function() {
+		$rootScope.player.setShuffle(true, {});
 	 	$rootScope.player.play({
-	 		uris : uri_list
+	 		context_uri: 'spotify:user:' + userid + ':playlist:' + listid
 	 	}).then( function() {
 	 		$rootScope.currentTrack = listid;
 	 		$rootScope.isPlaylist = true;
 	 		$rootScope.currentPlaylist = $scope.listname;
 	 	}, function(error) {
-	 		AlertController.create({
-	 			title: 'ERROR',
-	 			text: error;
-	 		});
 	 	});
 	}
 	// USE PLAYLIST LINK WITH OFFSET : INDEX
 	$scope.playTrack = function(trackinfo) {
+		$rootScope.player.setShuffle(false, {});
 	 	$rootScope.player.play({
-	 		uris : uri_list // skip to index of song 
+	 		context_uri : 'spotify:user:' + userid + ':playlist:' + listid,
+	 		 //then offset : index of curr track 
 	 	}).then( function() {
 	 		$rootScope.currentTrack = trackinfo;
 	 		$rootScope.isPlaylist = false;
 	 	}, function(error) {
-	 		AlertController.create({
-	 			title: 'ERROR',
-	 			text: error;
-	 		});
 	 	});
 	}
 	// BUTTON TO OPEN SPOTIFY APP
-	$scope.openSpotify = function(link) {
+	$scope.openSpotify = function() {
+		var link = 'https://open.spotify.com/user/' + userid + '/playlist/' + listid;
 		window.open(link, '_blank', 'location=yes');
 	}
 
@@ -71,16 +69,12 @@ angular.module('spotifyvideo.controllers', [])
 
 	// capture error callback
 	var captureError = function(error) {
-	    //navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-	    AlertController.create({
- 			title: 'ERROR',
- 			text: error;
- 		});
+		//navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
 	};
 	
 	$scope.captureVideo = function() {
 		// start video capture
-		navigator.device.capture.captureVideo(captureSuccess, captureError, {limit:2});
+		navigator.device.capture.captureVideo(captureSuccess, captureError, );
 	};
 
 	/* PLAYER CONTROLS FOR FOOTER BAR */
@@ -110,49 +104,23 @@ angular.module('spotifyvideo.controllers', [])
 
 })
 
-.controller('ListsCtrl', function($scope, $rootScope, $ionicPlatform, $cordovaOauth, Spotify) {
+.controller('ListsCtrl', function($scope, $rootScope, $ionicPlatform, $state, Spotify) {
 	$scope.playlists = [];
-	$scope.loggedIn = false;
 
-	if($rootScope.player == null) {
-		$rootScope.player = new SpotifyWebApi();
-		// $rootScope.player.setClientId('572e9a9e80ba47b09b7ec8eca1e8a709');
-		// $rootScope.player.setRedirectUri('http://localhost/callback');
-		// $rootScope.player.setScope('user-read-private playlist-read-private');
-	}
-
-	$scope.spotifyLogin = function() {
-		$cordovaOauth.spotify(Spotify.clientId, ['user-read-private', 'playlist-read-private']).then( function(result) {
-		  	window.localStorage.setItem('spotify-token', result.access_token);
-		  	Spotify.setAuthToken(result.access_token); 
-		  	$rootScope.player.setAccessToken(result.access_token);
-		  	$scope.loggedIn = true;
-		 	$scope.updateInfo();
-		}, function(error) {
-		 	console.log("ERROR : " + error);
-		}); 
-	};
+	// make sure we're logged in first
+	Spotify.getCurrentUser().then(function(data) {
+		$scope.getUserPlaylists(data.data.id);
+	}, function(error) {
+		$state.go('login');
+	}); 
 
 	$scope.updateInfo = function() {
 		Spotify.getCurrentUser().then(function(data) {
 			$scope.getUserPlaylists(data.data.id);
 		}, function(error) {
-			$scope.spotifyLogin();
+			$state.go('login');
 		}); 
 	};
-
-	$ionicPlatform.ready(function() {
-		var storedToken = window.localStorage.getItem('spotify-token');
-		if(storedToken !== null) {
-			Spotify.setAuthToken(storedToken);
-			$rootScope.player.setAccessToken(storedToken);
-			$scope.loggedIn = true;
-			$scope.updateInfo();
-		} else {
-			$scope.loggedIn = false;
-			$scope.spotifyLogin();
-		}
-	});
 
 	$scope.getUserPlaylists = function(userid) {
 		Spotify.getUserPlaylists(userid).then(function (data) {
@@ -186,4 +154,31 @@ angular.module('spotifyvideo.controllers', [])
 		}
 	}
 
+	$ionicPlatform.ready(function() {
+		var storedToken = window.localStorage.getItem('spotify-token');
+		if(storedToken !== null) {
+			Spotify.setAuthToken(storedToken);
+			$rootScope.player.setAccessToken(storedToken);
+			$scope.updateInfo();
+		} else {
+			$state.go('login');
+		}
+	});
+
+})
+
+.controller('LoginCtrl', function($scope, $rootScope, $state, $cordovaOauth, Spotify) {
+	if($rootScope.player == null) {
+		$rootScope.player = new SpotifyWebApi();
+	}
+	$scope.spotifyLogin = function() {
+		$cordovaOauth.spotify(Spotify.clientId, ['user-read-private', 'playlist-read-private']).then( function(result) {
+		  	window.localStorage.setItem('spotify-token', result.access_token);
+		  	Spotify.setAuthToken(result.access_token); 
+		  	$rootScope.player.setAccessToken(result.access_token);
+		 	$state.go('lists');
+		}, function(error) {
+		 	console.log("ERROR : " + error);
+		}); 
+	};
 });

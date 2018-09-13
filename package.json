@@ -41,8 +41,8 @@
       "cordova-plugin-media": {
         "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO"
       },
-      "cordova-spotify": {},
-      "cordova-plugin-media-capture": {}
+      "cordova-plugin-media-capture": {},
+      "cordova-spotify": {}
     },
     "platforms": [
       "ios"

@@ -1,0 +1,73 @@
+.playlist-view {
+	.button-full {
+		padding: 8px;
+		margin: 0;
+	}
+	.list {
+		padding:0;
+		.list.item {
+			padding: 0;
+			margin: 0;
+			border-bottom: none;
+		}
+	}
+}
+
+
+#landing {
+	font-family: 'Ubuntu Condensed', sans-serif;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	background: #000;
+	color: #fff;
+	text-align: center;
+	&.table-align {
+		display: table;
+		margin: 0 auto;
+		.vertical-align {
+			display: table-cell;
+			vertical-align: middle;
+			position: relative;
+		}
+	}
+	.logos {
+		padding: 40px 10px;
+	}
+	#spotify-logo {
+		width: 100px;
+		height: 100px;
+		fill: #000;
+		position: relative;
+		z-index: 1;
+		animation: Wave 10s ease infinite, MoveRight 5s 3s ease forwards;
+		path {
+			animation: ChangeColor 2s 5s ease forwards;
+		}
+	}
+	#video-logo {
+		width: 100px;
+		height: 100px;
+		fill: #b534ef;
+		animation: Wave 10s 1s ease infinite, MoveLeft 5s 3s ease forwards;
+	}
+	#and {
+		font-size: 50px;
+		padding: 10px 30px;
+	}
+	@keyframes Wave {
+		0%, 100% { fill: #b534ef; }
+		50% { fill: #4980ff; }
+	}
+	@keyframes ChangeColor {
+		100% { fill: #fff; }
+	}
+	@keyframes MoveRight {
+		0% { transform: translateX(0) scale(1); }
+		100% { transform: translateX(80px) scale(.7); } 
+	}
+	@keyframes MoveLeft {
+		0% { transform: translateX(0) scale(1); }
+		100% { transform: translateX(-90px) scale(1.4); }
+	}
+}
