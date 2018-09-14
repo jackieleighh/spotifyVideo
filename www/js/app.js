@@ -49,6 +49,6 @@ angular.module('spotifyvideo', ['ionic','spotifyvideo.controllers','ngCordova', 
 
 .config(function (SpotifyProvider) {
   SpotifyProvider.setClientId('572e9a9e80ba47b09b7ec8eca1e8a709');
-  SpotifyProvider.setRedirectUri('http://localhost/callback');
+  SpotifyProvider.setRedirectUri('http://10.0.0.130/callback');
   SpotifyProvider.setScope('user-read-private playlist-read-private');
 });

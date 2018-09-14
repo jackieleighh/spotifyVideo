@@ -1,4 +1,4 @@
-<ion-view title="SpotifyVideo">
+<ion-view title="SpotifyVideo" hide-back-button="true" class="list-view">
 	<ion-content class="has-header">
 		<ion-list>
 			<ion-item ng-repeat="list in playlists" ui-sref="playlist({listid: list.id, userid: list.owner.id, listname: list.name})">
@@ -8,15 +8,15 @@
 		{{ status }}
 	</ion-content>
 
-	<ion-footer-bar ng-if="isPlaylist" class="bar-subfooter bar-stable">
-        <button ng-click="prev()" class="button button-outline button-balanced pull-left"><i class="ion-skip-backward"> Prev</i></button>
-        <div class="title">{{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }}</div>
-        <button ng-click="next()" class="button button-outline button-balanced pull-right"><i class="ion-skip-forward"> Next</i></button>
+	<ion-footer-bar class="bar-subfooter bar-stable" ng-show="currentTrack">
+		<button ng-click="prev()" class="button button-outline button-positive pull-left"><i class="ion-skip-backward"></i> Prev</button>
+        <div class="title" ng-if="!isPlaylist"> {{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }} </div>
+        <div class="title" ng-if="isPlaylist"> {{ currentPlaylist }} </div>
+        <button ng-click="next()" class="button button-outline button-positive pull-left">Next <i class="ion-skip-forward"></i></button>
     </ion-footer-bar>
-	<ion-footer-bar align-title="left" class="bar-stable" ng-show="currentTrack">
-        <button ng-click="play()" class="button button-outline button-balanced pull-left"><i class="ion-play"> Play</i></button>
-    	<div class="title" ng-if="!isPlaylist"> {{ currentTrack.track.name }} - {{ currentTrack.track.artists[0].name }} </div>
-    	<div class="title" ng-if="isPlaylist"> {{ currentPlaylist }} </div>
-        <button ng-click="pause()" class="button button-outline button-balanced pull-right"><i class="ion-pause"> Pause</i></button>
-    </ion-footer-bar> 
+	<ion-footer-bar align-title="left" class="bar-positive">
+		<button ng-click="play()" class="button button-positive no-outline pull-left"><i class="ion-play"></i> Play</button>
+        <button ng-click="captureVideo()" class="title button button-positive no-outline"><i class="ion-videocamera"> Record Video</i></button>
+        <button ng-click="pause()" class="button button-positive no-outline pull-right">Pause <i class="ion-pause"></i></button>
+    </ion-footer-bar>
 </ion-view>

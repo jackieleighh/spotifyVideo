@@ -1,4 +1,5 @@
 .playlist-view {
+	padding-bottom: 90px;
 	.button-full {
 		padding: 8px;
 		margin: 0;
@@ -13,6 +14,13 @@
 	}
 }
 
+.list-view {
+	padding-bottom: 90px;
+}
+
+.bar .title {
+	margin: 0 65px;
+}
 
 #landing {
 	font-family: 'Ubuntu Condensed', sans-serif;

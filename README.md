@@ -4,4 +4,6 @@ This is a cross platform application using the Ionic framework.  It allows a Spo
 
 I decided to make this app because of the incompatibilty between the native iOS video recorder and Spotify.  Being into videography, this seemed like a fun project to do in my spare time.
 
+This [Spotify Web API JS wrapper](https://github.com/JMPerez/spotify-web-api-js) was used, and is awesome.
+
 ### This is still a work in progress - date of completion: TBD

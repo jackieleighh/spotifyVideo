@@ -1,15 +1,16 @@
 angular.module('spotifyvideo.controllers', [])
 
-.controller('PlaylistCtrl', function($scope, $rootScope, $stateParams, $state, Spotify) {
+.controller('PlaylistCtrl', function($scope, $rootScope, $stateParams, $state, $cordovaCapture, Spotify) {
 	
+	var listid = $stateParams.listid;
+	var userid = $stateParams.userid;
+
 	// make sure we're logged in first
 	Spotify.getCurrentUser().then(function(data) {
 	}, function(error) {
 		$state.go('login');
 	}); 
-	
-	var listid = $stateParams.listid;
-	var userid = $stateParams.userid;
+
 	$scope.listname = $stateParams.listname;
 
 	$scope.tracks = [];
@@ -23,30 +24,40 @@ angular.module('spotifyvideo.controllers', [])
  		uri_list[i] = "spotify:track:" + $scope.tracks[i].track.id;
  	}
 
- 	// set repeat on auto
- 	//$rootScope.player.setRepeat({ state: true });
+ 	// setInterval( function() {
+ 	// 	$scope.$apply( function() {
+	 // 		$rootScope.currentTrack = $rootScope.player.getMyCurrentPlayingTrack();
+	 // 	});
+ 	// }, 5000);
 
  	// TRY TO USE PLAYLIST LINK INSTEAD OF URI LIST
 	$scope.playPlaylist = function() {
+		// set repeat on auto
+ 		//$rootScope.player.setRepeat({ 'context' : 'spotify:user:' + userid + ':playlist:' + listid }, {});
 		$rootScope.player.setShuffle(true, {});
 	 	$rootScope.player.play({
 	 		context_uri: 'spotify:user:' + userid + ':playlist:' + listid
 	 	}).then( function() {
-	 		$rootScope.currentTrack = listid;
-	 		$rootScope.isPlaylist = true;
-	 		$rootScope.currentPlaylist = $scope.listname;
+	 		$scope.$apply( function() {
+		 		$rootScope.currentTrack = listid;
+		 		$rootScope.isPlaylist = true;
+		 		$rootScope.currentPlaylist = $scope.listname;
+		 	});
 	 	}, function(error) {
 	 	});
 	}
 	// USE PLAYLIST LINK WITH OFFSET : INDEX
-	$scope.playTrack = function(trackinfo) {
+	$scope.playTrack = function(trackinfo, index) {
+		// set repeat on auto
 		$rootScope.player.setShuffle(false, {});
 	 	$rootScope.player.play({
 	 		context_uri : 'spotify:user:' + userid + ':playlist:' + listid,
-	 		 //then offset : index of curr track 
+	 		offset : { 'position': index }
 	 	}).then( function() {
-	 		$rootScope.currentTrack = trackinfo;
-	 		$rootScope.isPlaylist = false;
+	 		$scope.$apply( function() {
+		 		$rootScope.currentTrack = trackinfo;
+		 		$rootScope.isPlaylist = false;
+		 	});
 	 	}, function(error) {
 	 	});
 	}
@@ -55,26 +66,21 @@ angular.module('spotifyvideo.controllers', [])
 		var link = 'https://open.spotify.com/user/' + userid + '/playlist/' + listid;
 		window.open(link, '_blank', 'location=yes');
 	}
-
-	/* VIDEO CAPTURE FUNCTIONS */
-	// capture callback
-	var captureSuccess = function(mediaFiles) {
-	    var i, path, len;
-	    for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-	        path = mediaFiles[i].fullPath;
-	        // do something interesting with the file
-	        console.log(path);
-	    }
-	};
-
-	// capture error callback
-	var captureError = function(error) {
-		//navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-	};
 	
 	$scope.captureVideo = function() {
+		var options = { limit: 3, saveToPhotoAlbum: true };
 		// start video capture
-		navigator.device.capture.captureVideo(captureSuccess, captureError, );
+		$cordovaCapture.captureVideo(options).then( function() {
+			// success
+			for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+		        path = mediaFiles[i].fullPath;
+		        // do something interesting with the file
+		        console.log(path);
+		    }
+		}, function(error) {
+			// fail 
+			console.log(error);
+		});
 	};
 
 	/* PLAYER CONTROLS FOR FOOTER BAR */
@@ -91,20 +97,20 @@ angular.module('spotifyvideo.controllers', [])
 	}
 
 	$scope.prev = function() {
-		if($scope.currentTrack != null && $scope.isPlaylist) {
+		if($scope.currentTrack != null) {
 			$rootScope.player.skipToPrevious();
 		}
 	}
 
 	$scope.next = function() { 
-		if($scope.currentTrack != null && $scope.isPlaylist) {
+		if($scope.currentTrack != null) {
 			$rootScope.player.skipToNext();
 		}
 	}
 
 })
 
-.controller('ListsCtrl', function($scope, $rootScope, $ionicPlatform, $state, Spotify) {
+.controller('ListsCtrl', function($scope, $rootScope, $ionicPlatform, $state, $cordovaCapture, Spotify) {
 	$scope.playlists = [];
 
 	// make sure we're logged in first
@@ -126,6 +132,23 @@ angular.module('spotifyvideo.controllers', [])
 		Spotify.getUserPlaylists(userid).then(function (data) {
 			$scope.playlists = data.data.items;
 		});
+		$scope.$apply();
+	};
+
+	$scope.captureVideo = function() {
+		var options = { limit: 3, saveToPhotoAlbum: true };
+		// start video capture
+		$cordovaCapture.captureVideo(options).then( function() {
+			// success
+			for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+		        path = mediaFiles[i].fullPath;
+		        // do something interesting with the file
+		        console.log(path);
+		    }
+		}, function(error) {
+			// fail 
+			console.log(error);
+		});
 	};
 
 	/* PLAYER CONTROLS FOR FOOTER BAR */
@@ -142,15 +165,14 @@ angular.module('spotifyvideo.controllers', [])
 	}
 
 	$scope.prev = function() {
-		if($scope.currentTrack != null && $scope.isPlaylist) {
+		if($scope.currentTrack != null) {
 			$rootScope.player.skipToPrevious();
 		}
 	}
 
 	$scope.next = function() { 
-		if($scope.currentTrack != null && $scope.isPlaylist) {
+		if($scope.currentTrack != null) {
 			$rootScope.player.skipToNext();
-			console.log($rootScope.player);
 		}
 	}
 
